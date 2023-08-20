@@ -3,6 +3,7 @@ This project is part of the Java branch of School21.
 This is a web application prototype developed using the Java Servlet API stack.
 The application automates the booking business process of a movie theater.
 The current version of the application implements registration and authentication mechanisms.
+In this project, the use of Spring MVC and Hibernate components is prohibited (repository layer shall be implemented using JdbcTemplate).
 
 ## Features
 A prototype web application with the Java Servlet API stack.
@@ -30,40 +31,36 @@ A prototype web application with the Java Servlet API stack.
 
 Using Maven
 ```
+docker run --name pg-13.3 -p 5432:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=cinema_db -d postgres:13.3
 mvn clean package org.codehaus.cargo:cargo-maven2-plugin:run
 ```
 
 Using docker-compose
 ```
-cd docker
-docker-compose up --build
+docker-compose up -d --build
 ```
 
 ## Entrypoint for a website
 ```
-localhost:8080/fwa
+localhost:8080
 ```
 
 <details>
 <summary>Screenshots</summary>
 <details>
-<summary>Index</summary>
-<img src="/screenshots/index.png">
-</details>
-<details>
 <summary>SignUp</summary>
-<img src="/screenshots/signUp.png">
+<img src="./screenshots/signUp.png">
 </details>
 <details>
 <summary>SignIn</summary>
-<img src="/screenshots/signIn.png">
+<img src="./screenshots/signIn.png">
 </details>
 <details>
 <summary>Default Profile</summary>
-<img src="/screenshots/default_profile_page.png">
+<img src="./screenshots/default_profile_page.png">
 </details>
 <details>
 <summary>Profile with avatar</summary>
-<img src="/screenshots/profile_page_with_avatar.png">
+<img src="./screenshots/profile_page_with_avatar.png">
 </details>
 </details>

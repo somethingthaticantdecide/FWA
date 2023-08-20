@@ -11,16 +11,13 @@ services:
     ports:
       - 5432:5432
   app:
-    image: tomcat:9.0.8-jre8
+    build: ./docker
     volumes:
       - ./target/Cinema.war:/usr/local/tomcat/webapps/Cinema.war
-#      - ./docker/tomcat-users.xml:/usr/local/tomcat/conf/tomcat-users.xml
-#      - ./docker/server.xml:/usr/local/tomcat/conf/server.xml
+      - ./docker/server.xml:/usr/local/tomcat/conf/server.xml
     ports:
       - 8080:8080
     depends_on:
       - db
-#    environment:
-#      POSTGRES_USER: postgres
-#      POSTGRES_PASSWORD: postgres
-#      POSTGRES_DB: cinema_db
+    environment:
+      MY_SERVER_ADDRESS: db
