@@ -20,12 +20,10 @@ import java.nio.file.Path;
         maxRequestSize=1024*1024*100)   	        // 100 MB
 public class UploadServlet extends HttpServlet {
 
-    public UploadServlet(){}
-
     private UserService userService;
 
     @Override
-    public void init (ServletConfig config ) {
+    public void init (ServletConfig config) {
         ServletContext context = config.getServletContext();
         ApplicationContext springContext = (ApplicationContext) context.getAttribute("springContext");
         this.userService = springContext.getBean(UserService.class);

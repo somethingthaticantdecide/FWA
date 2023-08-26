@@ -20,8 +20,6 @@ import java.util.Base64;
 @MultipartConfig
 public class ImagesServlet extends HttpServlet {
 
-    public ImagesServlet(){}
-
     private String pathToPicture;
 
     @Override

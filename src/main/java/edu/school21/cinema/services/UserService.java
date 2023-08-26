@@ -48,7 +48,6 @@ public class UserService {
         return filesUploadPath;
     }
 
-
     public List<Image> getUserImages(String username) {
         return userDao.getUserImages(username);
     }

@@ -21,47 +21,47 @@ import java.util.List;
 @MultipartConfig
 public class ProfileServlet extends HttpServlet {
 
-    public ProfileServlet(){}
-
     private UserService userService;
 
     @Override
-    public void init (ServletConfig config ) {
+    public void init (ServletConfig config) {
         ServletContext context = config.getServletContext();
         ApplicationContext springContext = (ApplicationContext) context.getAttribute("springContext");
         this.userService = springContext.getBean(UserService.class);
     }
 
-    private String getFileName(final Part part) {
-        for (String content : part.getHeader("content-disposition").split(";")) {
-            if (content.trim().startsWith("filename")) {
-                return content.substring(content.indexOf('=') + 1).trim().replace("\"", "");
-            }
-        }
-        return null;
-    }
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // Получение имени пользователя из атрибута сессии
         String username = (String) request.getSession().getAttribute("username");
 
+        // Получение списка сессий пользователя и сохранение его в атрибут сессии
         List<Session> sessions = userService.getUserSessions(userService.find(username).getId());
         request.getSession().setAttribute("sessions", sessions);
+
+        // Получение списка изображений пользователя
         List<Image> images = userService.getUserImages(username);
 
-        File file;
+        String pathname;
         if (images.isEmpty()) {
-            file = new File(getClass().getClassLoader().getResource("/images/blankProfile.png").getFile());
+            // Если у пользователя нет изображений, используется заглушка
+            pathname = getClass().getClassLoader().getResource("/images/blankProfile.png").getFile();
         } else {
-            file = new File(userService.getFilesUploadPath() + File.separator + username + File.separator + images.get(images.size() - 1).getFilename());
+            // Получение последнего изображения пользователя
+            String filename = images.get(images.size() - 1).getFilename();
+            // Формирование пути к файлу
+            pathname = userService.getFilesUploadPath() + File.separator + username + File.separator + filename;
         }
+        File file = new File(pathname);
+        // Кодирование файла в Base64 и сохранение в атрибут сессии
         String encodedString = Base64.getEncoder().encodeToString(FileUtils.readFileToByteArray(file));
-        request.getSession().setAttribute("avatar", encodedString);
 
+        // Сохранение списка изображений в атрибут сессии
+        request.getSession().setAttribute("avatar", encodedString);
         request.getSession().setAttribute("images", images);
 
+        // Перенаправление запроса на JSP страницу
         RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/profile.jsp");
         dispatcher.forward(request, response);
     }
-
 }

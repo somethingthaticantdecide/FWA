@@ -10,35 +10,39 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 @WebServlet("/signIn")
 public class SignInServlet extends HttpServlet {
-    public SignInServlet(){}
-
     private UserService userService;
 
     @Override
-    public void init(ServletConfig config ) {
+    public void init (ServletConfig config ) {
         ServletContext context = config.getServletContext();
         ApplicationContext springContext = (ApplicationContext) context.getAttribute("springContext");
         this.userService = springContext.getBean(UserService.class);
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
 
-        if (userService.authorize(username, password)) {
-            userService.addSessionStart(userService.find(username).getId(), ZonedDateTime.now().toLocalDate().toString(), ZonedDateTime.now().toLocalTime().toString(), request.getRemoteAddr());
-            request.getSession().setAttribute("username", request.getParameter("username"));
-            response.sendRedirect("/profile");
-        } else {
+        if (!userService.authorize(username, password)) {
             response.sendRedirect("/signIn");
+            return;
         }
+
+        String time = ZonedDateTime.now().toLocalTime().format(DateTimeFormatter.ofPattern("hh:mm:ss"));
+        String date = ZonedDateTime.now().toLocalDate().toString();
+        HttpSession session = request.getSession();
+
+        userService.addSessionStart(userService.find(username).getId(), date, time, request.getRemoteAddr());
+        session.setAttribute("username", request.getParameter("username"));
+        response.sendRedirect("/profile");
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.getRequestDispatcher("/WEB-INF/html/signIn.html").forward(request, response);
     }
 }
