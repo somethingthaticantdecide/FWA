@@ -37,6 +37,7 @@ mvn clean package org.codehaus.cargo:cargo-maven2-plugin:run
 
 Using docker-compose
 ```
+mvn clean package
 docker-compose up -d --build
 ```
 
